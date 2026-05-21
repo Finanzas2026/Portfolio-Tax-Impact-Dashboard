@@ -9,7 +9,7 @@ st.set_page_config(page_title="Tax Impact Dashboard", page_icon="📊", layout="
 
 st.markdown("""
 <style>
-.main .block-container{max-width:1400px;padding:1.5rem 2rem;}
+.main .block-container{max-width:1400px;padding:1.5rem 2rem;overflow-x:auto;}
 section[data-testid="stSidebar"]{display:none;}
 .header-box{background:linear-gradient(135deg,#0A2463,#1E5FA8);padding:22px 32px;
     border-radius:12px;margin-bottom:24px;}
@@ -24,6 +24,16 @@ section[data-testid="stSidebar"]{display:none;}
 .kpi-lbl{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;
     letter-spacing:.5px;margin-bottom:6px;}
 .kpi-val{font-size:22px;font-weight:900;color:#0A2463;}
+@media(max-width:768px){
+    .main .block-container{padding:0.5rem !important;}
+    .header-box{padding:14px 16px !important;}
+    .header-title{font-size:16px !important;}
+    .header-sub{font-size:11px !important;}
+    .kpi-box{width:100% !important;max-width:100% !important;
+        margin-right:0 !important;margin-bottom:8px;}
+    .kpi-val{font-size:16px !important;}
+    .zona-title{font-size:12px !important;padding:8px 12px !important;}
+}
 </style>""", unsafe_allow_html=True)
 
 # ── DATOS ──────────────────────────────────────────────────────────────────────

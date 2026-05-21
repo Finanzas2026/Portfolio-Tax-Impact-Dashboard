@@ -167,22 +167,19 @@ def render_zona(zona, metrica_grafico, kpi_orden, default_proyecto):
         xaxis=dict(tickangle=-30, tickfont=dict(size=12))
     )
 
-    # Título centrado
+    # Título y gráfico en la misma columna centrada
     nombre_filtro = proyecto_sel if proyecto_sel != "Todos" else "Todos los proyectos"
-    _, col_t, _ = st.columns([1.8, 4, 0.8])
-    with col_t:
+    _, col_c, _ = st.columns([0.3, 3, 0.3])
+    with col_c:
         st.markdown(f"""
         <div style="background:#EFF3FA;border:1px solid #C0D0F0;border-radius:8px;
-             padding:8px 16px;margin-bottom:8px;text-align:center;width:900px;">
+             padding:8px 16px;margin-bottom:8px;text-align:center;">
             <span style="font-size:19px;font-weight:700;color:#0A2463;">
                 {nombre_filtro}
             </span>
         </div>""", unsafe_allow_html=True)
-
-    # Gráfico centrado
-    _, col_c, _ = st.columns([1.9, 4, 0.9])
-    with col_c:
-        st.plotly_chart(fig, use_container_width=False)
+        fig.update_layout(width=None, height=350)
+        st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("<div style='margin-top:30px;'></div>", unsafe_allow_html=True)
 

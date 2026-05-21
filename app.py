@@ -149,13 +149,13 @@ def render_zona(zona, metrica_grafico, kpi_orden, default_proyecto):
         name="Con Impuesto", x=df_graf["proyecto"], y=df_graf["actual"],
         marker_color="#0A2463", width=bar_width,
         text=[f"{v*100:.1f}%" if es_pct else f"${v:,.0f}" for v in df_graf["actual"]],
-        textposition="outside", textfont=dict(size=12)
+        textposition="outside", textfont=dict(size=15)
     ))
     fig.add_trace(go.Bar(
         name="Sin Impuesto (Ley Casco)", x=df_graf["proyecto"], y=df_graf["sin_tx"],
         marker_color="#4C9BE8", width=bar_width,
         text=[f"{v*100:.1f}%" if es_pct else f"${v:,.0f}" for v in df_graf["sin_tx"]],
-        textposition="outside", textfont=dict(size=12)
+        textposition="outside", textfont=dict(size=15)
     ))
     fig.update_layout(
         title=dict(text=f"{metrica_grafico} — {zona}", font=dict(size=13, color="#0A2463")),

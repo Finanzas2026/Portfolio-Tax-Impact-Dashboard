@@ -35,7 +35,7 @@ def cargar():
         wb = openpyxl.load_workbook(RUTA_LOCAL, data_only=True)
     else:
         FILE_ID = st.secrets["FILE_ID"]
-        r = requests.get(f"https://drive.google.com/uc?export=download&id={FILE_ID}")
+        r = requests.get(f"https://docs.google.com/spreadsheets/d/{FILE_ID}/export?format=xlsx")
         wb = openpyxl.load_workbook(io.BytesIO(r.content), data_only=True)
     ws = wb["DATA"]
     rows = []

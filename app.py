@@ -11,7 +11,7 @@ st.markdown("""
 <style>
 .main .block-container{max-width:1400px;padding:1.5rem 2rem;overflow-x:auto;}
 section[data-testid="stSidebar"]{display:none;}
-.header-box{background:linear-gradient(135deg,#0A2463,#1E5FA8);padding:22px 32px;
+.header-box{background:linear-gradient(135deg,#0A2463,#0070C0);padding:22px 32px;
     border-radius:12px;margin-bottom:24px;}
 .header-title{color:white;font-size:26px;font-weight:900;letter-spacing:2px;}
 .header-sub{color:#D0E8FF;font-size:13px;margin-top:4px;}
@@ -114,7 +114,7 @@ def resumen_fcf(df):
                 elif pct.startswith("-"):
                     color = "#E74C3C"
                 else:
-                    color = "#1E5FA8"
+                    color = "#0070C0"
                 pct_html = f'<div style="font-size:13px;font-weight:700;color:{color};margin-top:4px;">{pct}</div>'
             else:
                 pct_html = ""
@@ -129,7 +129,7 @@ def resumen_fcf(df):
         st.markdown(html, unsafe_allow_html=True)
 
     st.markdown("""
-<div style="background:#F0F4FA;border-left:4px solid #1E5FA8;border-radius:6px;
+<div style="background:#F0F4FA;border-left:4px solid #0070C0;border-radius:6px;
      padding:12px 20px;margin:16px auto 8px auto;max-width:860px;font-size:13px;color:#333;line-height:1.8;">
   <b style="color:#0A2463;">FCF Con Impuesto</b> — Flujo de caja libre desde el financiamiento aplicando la carga fiscal vigente (escenario base).<br>
   <b style="color:#0A2463;">FCF Sin Impuesto (Ley Casco)</b> — Flujo de caja libre bajo el beneficio de exoneración fiscal de la Ley Casco Antiguo.<br>
@@ -321,9 +321,9 @@ def render_zona_etiquetas(zona, metricas, default_proyecto):
     st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
     render_fila("ESCENARIO BASE — CON IMPUESTO", "actual", "#0A2463", show_pct=False)
     st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
-    render_fila("SIN IMPUESTO (LEY CASCO)", "sin_tx", "#1E5FA8", show_pct=True)
+    render_fila("SIN IMPUESTO (LEY CASCO)", "sin_tx", "#0070C0", show_pct=True)
     st.markdown("""
-<div style="background:#F0F4FA;border-left:4px solid #1E5FA8;border-radius:6px;
+<div style="background:#F0F4FA;border-left:4px solid #0070C0;border-radius:6px;
      padding:12px 20px;margin:20px auto 8px auto;max-width:860px;font-size:13px;color:#333;line-height:1.8;">
   <b style="color:#0A2463;">Escenario Base — Con Impuesto</b> — Métricas del proyecto bajo la carga fiscal vigente sin aplicar beneficios de exoneración.<br>
   <b style="color:#0A2463;">Sin Impuesto (Ley Casco)</b> — Métricas del proyecto aplicando la exoneración fiscal de la Ley Casco Antiguo. El porcentaje indica la variación respecto al escenario base.

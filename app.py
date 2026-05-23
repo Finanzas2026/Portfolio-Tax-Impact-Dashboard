@@ -12,7 +12,7 @@ st.markdown("""
 .main .block-container{max-width:1400px;padding:1.5rem 2rem;overflow-x:auto;}
 section[data-testid="stSidebar"]{display:none;}
 .header-box{background:#4D93D9;padding:5px 32px;
-    border-radius:12px;margin-bottom:24px;}
+    border-radius:12px;margin:0 auto 24px;width:80%;}
 .header-title{color:white;font-size:26px;font-weight:900;letter-spacing:2px;}
 .header-sub{color:#D0E8FF;font-size:13px;margin-top:4px;}
 .zona-title{font-size:15px;font-weight:900;color:#0A2463;background:#DCE6F1;
@@ -68,7 +68,7 @@ def es_pct_metrica(m):
 st.markdown("""
 <div class="header-box">
   <div class="header-title">PORTFOLIO — TAX IMPACT DASHBOARD</div>
-  <div class="header-sub">Valor Actual vs Valor Sin Impuestos · CASH ON CASH · IRR · FCF FROM FINANCING</div>
+  <div class="header-sub">Current Value vs Tax-Free Value · CASH ON CASH · IRR · FCF FROM FINANCING</div>
 </div>""", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -84,7 +84,7 @@ def resumen_fcf(df):
     a_tot = a_ca + a_sa
     s_tot = s_ca + s_sa
 
-    st.markdown('<div style="text-align:center;"><div class="zona-title">RESUMEN PORTFOLIO — FCF FROM FINANCING</div></div>', unsafe_allow_html=True)
+    st.markdown('<div style="text-align:center;"><div class="zona-title">PORTFOLIO SUMMARY — FCF FROM FINANCING</div></div>', unsafe_allow_html=True)
     st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
 
     def pct_var(base, diff):
@@ -96,15 +96,15 @@ def resumen_fcf(df):
         return f"{part / total * 100:.1f}%"
 
     filas = [
-        [("FCF Con Impuesto — Casco Antiguo", f"${a_ca:,.0f}",  pct_of(a_ca,  a_tot)),
-         ("FCF Con Impuesto — Santa Ana",     f"${a_sa:,.0f}",  pct_of(a_sa,  a_tot)),
-         ("FCF Con Impuesto — Total",         f"${a_tot:,.0f}", pct_of(a_tot, a_tot))],
-        [("FCF Sin Impuesto (Ley Casco) — Casco Antiguo", f"${s_ca:,.0f}",  pct_of(s_ca,  s_tot)),
-         ("FCF Sin Impuesto (Ley Casco) — Santa Ana",     f"${s_sa:,.0f}",  pct_of(s_sa,  s_tot)),
-         ("FCF Sin Impuesto (Ley Casco) — Total",         f"${s_tot:,.0f}", pct_of(s_tot, s_tot))],
-        [("Variación FCF — Casco Antiguo", f"${s_ca-a_ca:+,.0f}",     pct_var(a_ca,  s_ca-a_ca)),
-         ("Variación FCF — Santa Ana",     f"${s_sa-a_sa:+,.0f}",     pct_var(a_sa,  s_sa-a_sa)),
-         ("Variación FCF — Total",         f"${s_tot-a_tot:+,.0f}",   pct_var(a_tot, s_tot-a_tot))],
+        [("FCF With Tax — Casco Antiguo", f"${a_ca:,.0f}",  pct_of(a_ca,  a_tot)),
+         ("FCF With Tax — Santa Ana",     f"${a_sa:,.0f}",  pct_of(a_sa,  a_tot)),
+         ("FCF With Tax — Total",         f"${a_tot:,.0f}", pct_of(a_tot, a_tot))],
+        [("FCF Tax-Free (Casco Law) — Casco Antiguo", f"${s_ca:,.0f}",  pct_of(s_ca,  s_tot)),
+         ("FCF Tax-Free (Casco Law) — Santa Ana",     f"${s_sa:,.0f}",  pct_of(s_sa,  s_tot)),
+         ("FCF Tax-Free (Casco Law) — Total",         f"${s_tot:,.0f}", pct_of(s_tot, s_tot))],
+        [("FCF Variance — Casco Antiguo", f"${s_ca-a_ca:+,.0f}",     pct_var(a_ca,  s_ca-a_ca)),
+         ("FCF Variance — Santa Ana",     f"${s_sa-a_sa:+,.0f}",     pct_var(a_sa,  s_sa-a_sa)),
+         ("FCF Variance — Total",         f"${s_tot-a_tot:+,.0f}",   pct_var(a_tot, s_tot-a_tot))],
     ]
     for fila in filas:
         html = '<div style="display:flex;gap:10px;justify-content:center;margin-bottom:10px;">'
@@ -132,11 +132,11 @@ def resumen_fcf(df):
     st.markdown("""
 <div style="background:#F0F4FA;border-left:4px solid #0070C0;border-radius:6px;
      padding:12px 20px;margin:16px auto 8px auto;max-width:860px;font-size:13px;color:#333;line-height:1.8;">
-  <b style="color:#0A2463;">FCF Con Impuesto</b> — Flujo de caja libre desde el financiamiento aplicando la carga fiscal vigente (escenario base).<br>
-  <b style="color:#0A2463;">FCF Sin Impuesto (Ley Casco)</b> — Flujo de caja libre bajo el beneficio de exoneración fiscal de la Ley Casco Antiguo.<br>
-  <b style="color:#0A2463;">Variación FCF</b> — Diferencia absoluta y relativa entre ambos escenarios; refleja el impacto económico directo del beneficio fiscal.
+  <b style="color:#0A2463;">FCF With Tax</b> — Free cash flow from financing applying the current tax burden (base scenario).<br>
+  <b style="color:#0A2463;">FCF Tax-Free (Casco Law)</b> — Free cash flow under the tax exemption benefit of the Casco Antiguo Law.<br>
+  <b style="color:#0A2463;">FCF Variance</b> — Absolute and relative difference between both scenarios; reflects the direct economic impact of the tax benefit.
 </div>""", unsafe_allow_html=True)
-    st.markdown("<hr style='border:none;border-top:2px solid #e0e0e0;margin:24px 0;'>",
+    st.markdown("<hr style='border:none;border-top:2px solid #e0e0e0;width:80%;margin:24px auto;'>",
                 unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -149,14 +149,14 @@ def render_zona(zona, metrica_grafico, kpi_orden, default_proyecto):
     proyectos = sorted(df_z["proyecto"].unique().tolist())
 
     # Dropdown ancho reducido (~4cm) con opción "Todos"
-    opciones = ["Todos"] + proyectos
+    opciones = ["All"] + proyectos
     default_idx = opciones.index(default_proyecto) if default_proyecto in opciones else 0
     col_sel, _ = st.columns([1, 4])
     with col_sel:
-        proyecto_sel = st.selectbox("Proyecto:", opciones, index=default_idx,
+        proyecto_sel = st.selectbox("Project:", opciones, index=default_idx,
                                     key=f"sel_{zona}")
 
-    df_proy = df_z.copy() if proyecto_sel == "Todos" else df_z[df_z["proyecto"] == proyecto_sel].copy()
+    df_proy = df_z.copy() if proyecto_sel == "All" else df_z[df_z["proyecto"] == proyecto_sel].copy()
 
     # ── 3 ETIQUETAS KPI ────────────────────────────────────────────────────────
     st.markdown("")
@@ -180,7 +180,7 @@ def render_zona(zona, metrica_grafico, kpi_orden, default_proyecto):
                 pct_html = ""
         cards_html += (
             '<div class="kpi-box">'
-            f'<div class="kpi-lbl">Variación {m}</div>'
+            f'<div class="kpi-lbl">Variance {m}</div>'
             f'<div class="kpi-val">{diff_val}</div>'
             f'{pct_html}'
             '</div>'
@@ -195,15 +195,15 @@ def render_zona(zona, metrica_grafico, kpi_orden, default_proyecto):
     es_pct  = es_pct_metrica(metrica_grafico)
 
     fig = go.Figure()
-    bar_width = 0.25 if proyecto_sel != "Todos" else 0.35
+    bar_width = 0.25 if proyecto_sel != "All" else 0.35
     fig.add_trace(go.Bar(
-        name="Con Impuesto", x=df_graf["proyecto"], y=df_graf["actual"],
+        name="With Tax", x=df_graf["proyecto"], y=df_graf["actual"],
         marker_color="#0A2463", width=bar_width,
         text=[f"{v*100:.1f}%" if es_pct else f"${v:,.0f}" for v in df_graf["actual"]],
         textposition="outside", textfont=dict(size=15)
     ))
     fig.add_trace(go.Bar(
-        name="Sin Impuesto (Ley Casco)", x=df_graf["proyecto"], y=df_graf["sin_tx"],
+        name="Tax-Free (Casco Law)", x=df_graf["proyecto"], y=df_graf["sin_tx"],
         marker_color="#4C9BE8", width=bar_width,
         text=[f"{v*100:.1f}%" if es_pct else f"${v:,.0f}" for v in df_graf["sin_tx"]],
         textposition="outside", textfont=dict(size=15)
@@ -219,7 +219,7 @@ def render_zona(zona, metrica_grafico, kpi_orden, default_proyecto):
     )
 
     # Título y gráfico en la misma columna centrada
-    nombre_filtro = proyecto_sel if proyecto_sel != "Todos" else "Todos los proyectos"
+    nombre_filtro = proyecto_sel if proyecto_sel != "All" else "All Projects"
     _, col_c, _ = st.columns([0.3, 3, 0.3])
     with col_c:
         st.markdown(f"""
@@ -243,17 +243,18 @@ def render_zona(zona, metrica_grafico, kpi_orden, default_proyecto):
         s   = r["sin_tx"]
         d   = s - a
         filas.append({
-            "Descripción / Métrica": m,
-            "Con Impuesto":              fmt_v(a, pct),
-            "Sin Impuesto (Ley Casco)":  fmt_v(s, pct),
-            "Diferencia":            (f"{d*100:+.2f}%" if pct else f"${d:+,.0f}"),
+            "Description / Metric":  m,
+            "With Tax":              fmt_v(a, pct),
+            "Tax-Free (Casco Law)":  fmt_v(s, pct),
+            "Difference":            (f"{d*100:+.2f}%" if pct else f"${d:+,.0f}"),
         })
 
     _, col_t, _ = st.columns([1, 2, 1])
     with col_t:
-        st.markdown(f"**{proyecto_sel} — Detalle completo**")
+        st.markdown(f"**{proyecto_sel} — Full Detail**")
         st.dataframe(pd.DataFrame(filas), use_container_width=True, hide_index=True)
 
+st.markdown("<div style='margin-top:48px;'></div>", unsafe_allow_html=True)
 resumen_fcf(df_all)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -261,17 +262,17 @@ resumen_fcf(df_all)
 # ══════════════════════════════════════════════════════════════════════════════
 def render_zona_etiquetas(zona, metricas, default_proyecto):
     df_z = df_all[df_all["zona"] == zona]
-    opciones = ["Todos"] + sorted(df_z["proyecto"].unique().tolist())
+    opciones = ["All"] + sorted(df_z["proyecto"].unique().tolist())
     default_idx = opciones.index(default_proyecto) if default_proyecto in opciones else 0
-    col_sel, _ = st.columns([1, 4])
+    _, col_sel, _ = st.columns([0.2, 0.8, 4])
     with col_sel:
-        proyecto_sel = st.selectbox("Proyecto:", opciones, index=default_idx,
+        proyecto_sel = st.selectbox("Project:", opciones, index=default_idx,
                                     key=f"sel_etq_{zona}")
 
     st.markdown(f'<div style="text-align:center;"><div class="zona-title">{zona}</div></div>',
                 unsafe_allow_html=True)
 
-    df_p = df_z.copy() if proyecto_sel == "Todos" else df_z[df_z["proyecto"] == proyecto_sel].copy()
+    df_p = df_z.copy() if proyecto_sel == "All" else df_z[df_z["proyecto"] == proyecto_sel].copy()
 
     def kpi_card(lbl, val, pct_str, pct_color):
         pct_html = (f'<div style="font-size:13px;font-weight:700;color:{pct_color};margin-top:4px;">{pct_str}</div>'
@@ -320,14 +321,14 @@ def render_zona_etiquetas(zona, metricas, default_proyecto):
         st.markdown(html, unsafe_allow_html=True)
 
     st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
-    render_fila("ESCENARIO BASE — CON IMPUESTO", "actual", "#0A2463", show_pct=False)
+    render_fila("BASE SCENARIO — WITH TAX", "actual", "#0A2463", show_pct=False)
     st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
-    render_fila("SIN IMPUESTO (LEY CASCO)", "sin_tx", "#0070C0", show_pct=True)
+    render_fila("TAX-FREE (CASCO LAW)", "sin_tx", "#0070C0", show_pct=True)
     st.markdown("""
 <div style="background:#F0F4FA;border-left:4px solid #0070C0;border-radius:6px;
      padding:12px 20px;margin:20px auto 8px auto;max-width:860px;font-size:13px;color:#333;line-height:1.8;">
-  <b style="color:#0A2463;">Escenario Base — Con Impuesto</b> — Métricas del proyecto bajo la carga fiscal vigente sin aplicar beneficios de exoneración.<br>
-  <b style="color:#0A2463;">Sin Impuesto (Ley Casco)</b> — Métricas del proyecto aplicando la exoneración fiscal de la Ley Casco Antiguo. El porcentaje indica la variación respecto al escenario base.
+  <b style="color:#0A2463;">Base Scenario — With Tax</b> — Project metrics under the current tax burden without applying exemption benefits.<br>
+  <b style="color:#0A2463;">Tax-Free (Casco Law)</b> — Project metrics applying the Casco Antiguo Law tax exemption. The percentage indicates the variance from the base scenario.
 </div>""", unsafe_allow_html=True)
     st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
 
@@ -337,7 +338,7 @@ render_zona_etiquetas(
     default_proyecto = "MANSION BALUARTE"
 )
 
-st.markdown("<hr style='border:none;border-top:2px solid #e0e0e0;margin:32px 0;'>",
+st.markdown("<hr style='border:none;border-top:2px solid #e0e0e0;width:80%;margin:32px auto;'>",
             unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════

@@ -84,30 +84,57 @@ def resumen_fcf(df):
     a_tot = a_ca + a_sa
     s_tot = s_ca + s_sa
 
-    st.markdown('<div class="zona-title">RESUMEN PORTFOLIO — FCF FROM FINANCING</div>', unsafe_allow_html=True)
-    st.markdown("")
+    st.markdown('<div style="text-align:center;"><div class="zona-title">RESUMEN PORTFOLIO — FCF FROM FINANCING</div></div>', unsafe_allow_html=True)
+
+    def pct_var(base, diff):
+        if not base or base == 0: return ""
+        return f"{diff / base * 100:+.1f}%"
+
+    def pct_of(part, total):
+        if not total or total == 0: return ""
+        return f"{part / total * 100:.1f}%"
 
     filas = [
-        [("FCF Sin Impuesto (Ley Casco) — Casco Antiguo", f"${s_ca:,.0f}"),
-         ("FCF Sin Impuesto (Ley Casco) — Santa Ana",     f"${s_sa:,.0f}"),
-         ("FCF Sin Impuesto (Ley Casco) — Total",         f"${s_tot:,.0f}")],
-        [("FCF Con Impuesto — Casco Antiguo", f"${a_ca:,.0f}"),
-         ("FCF Con Impuesto — Santa Ana",     f"${a_sa:,.0f}"),
-         ("FCF Con Impuesto — Total",         f"${a_tot:,.0f}")],
-        [("Variación FCF — Casco Antiguo", f"${s_ca-a_ca:+,.0f}"),
-         ("Variación FCF — Santa Ana",     f"${s_sa-a_sa:+,.0f}"),
-         ("Variación FCF — Total",         f"${s_tot-a_tot:+,.0f}")],
+        [("FCF Con Impuesto — Casco Antiguo", f"${a_ca:,.0f}",  pct_of(a_ca,  a_tot)),
+         ("FCF Con Impuesto — Santa Ana",     f"${a_sa:,.0f}",  pct_of(a_sa,  a_tot)),
+         ("FCF Con Impuesto — Total",         f"${a_tot:,.0f}", pct_of(a_tot, a_tot))],
+        [("FCF Sin Impuesto (Ley Casco) — Casco Antiguo", f"${s_ca:,.0f}",  pct_of(s_ca,  s_tot)),
+         ("FCF Sin Impuesto (Ley Casco) — Santa Ana",     f"${s_sa:,.0f}",  pct_of(s_sa,  s_tot)),
+         ("FCF Sin Impuesto (Ley Casco) — Total",         f"${s_tot:,.0f}", pct_of(s_tot, s_tot))],
+        [("Variación FCF — Casco Antiguo", f"${s_ca-a_ca:+,.0f}",     pct_var(a_ca,  s_ca-a_ca)),
+         ("Variación FCF — Santa Ana",     f"${s_sa-a_sa:+,.0f}",     pct_var(a_sa,  s_sa-a_sa)),
+         ("Variación FCF — Total",         f"${s_tot-a_tot:+,.0f}",   pct_var(a_tot, s_tot-a_tot))],
     ]
     for fila in filas:
         html = '<div style="display:flex;gap:10px;justify-content:center;margin-bottom:10px;">'
-        for lbl, val in fila:
-            html += f"""<div class="kpi-box">
-                <div class="kpi-lbl">{lbl}</div>
-                <div class="kpi-val">{val}</div>
-            </div>"""
+        for lbl, val, pct in fila:
+            if pct:
+                if pct.startswith("+"):
+                    color = "#2ECC71"
+                elif pct.startswith("-"):
+                    color = "#E74C3C"
+                else:
+                    color = "#1E5FA8"
+                pct_html = f'<div style="font-size:13px;font-weight:700;color:{color};margin-top:4px;">{pct}</div>'
+            else:
+                pct_html = ""
+            html += (
+                '<div class="kpi-box">'
+                f'<div class="kpi-lbl">{lbl}</div>'
+                f'<div class="kpi-val">{val}</div>'
+                f'{pct_html}'
+                '</div>'
+            )
         html += '</div>'
         st.markdown(html, unsafe_allow_html=True)
 
+    st.markdown("""
+<div style="background:#F0F4FA;border-left:4px solid #1E5FA8;border-radius:6px;
+     padding:12px 20px;margin:16px auto 8px auto;max-width:860px;font-size:13px;color:#333;line-height:1.8;">
+  <b style="color:#0A2463;">FCF Con Impuesto</b> — Flujo de caja libre desde el financiamiento aplicando la carga fiscal vigente (escenario base).<br>
+  <b style="color:#0A2463;">FCF Sin Impuesto (Ley Casco)</b> — Flujo de caja libre bajo el beneficio de exoneración fiscal de la Ley Casco Antiguo.<br>
+  <b style="color:#0A2463;">Variación FCF</b> — Diferencia absoluta y relativa entre ambos escenarios; refleja el impacto económico directo del beneficio fiscal.
+</div>""", unsafe_allow_html=True)
     st.markdown("<hr style='border:none;border-top:2px solid #e0e0e0;margin:24px 0;'>",
                 unsafe_allow_html=True)
 
@@ -137,13 +164,26 @@ def render_zona(zona, metrica_grafico, kpi_orden, default_proyecto):
         row_m = df_proy[df_proy["metrica"] == m]
         if row_m.empty:
             diff_val = "—"
+            pct_html = ""
         else:
-            diff = row_m["sin_tx"].sum() - row_m["actual"].sum()
+            actual = row_m["actual"].sum()
+            sin_tx = row_m["sin_tx"].sum()
+            diff   = sin_tx - actual
             diff_val = fmt_v(diff, pct=es_pct_metrica(m))
-        cards_html += f"""<div class="kpi-box">
-            <div class="kpi-lbl">Variación {m}</div>
-            <div class="kpi-val">{diff_val}</div>
-        </div>"""
+            if actual and actual != 0:
+                pct_change = diff / abs(actual) * 100
+                pct_str    = f"{pct_change:+.1f}%"
+                color      = "#2ECC71" if pct_change >= 0 else "#E74C3C"
+                pct_html   = f'<div style="font-size:13px;font-weight:700;color:{color};margin-top:4px;">{pct_str}</div>'
+            else:
+                pct_html = ""
+        cards_html += (
+            '<div class="kpi-box">'
+            f'<div class="kpi-lbl">Variación {m}</div>'
+            f'<div class="kpi-val">{diff_val}</div>'
+            f'{pct_html}'
+            '</div>'
+        )
     cards_html += '</div>'
     st.markdown(cards_html, unsafe_allow_html=True)
 
@@ -216,12 +256,83 @@ def render_zona(zona, metrica_grafico, kpi_orden, default_proyecto):
 resumen_fcf(df_all)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CASCO ANTIGUO
+# CASCO ANTIGUO — layout de etiquetas (2 filas × 3 métricas)
 # ══════════════════════════════════════════════════════════════════════════════
-render_zona(
+def render_zona_etiquetas(zona, metricas, default_proyecto):
+    st.markdown(f'<div style="text-align:center;"><div class="zona-title">{zona}</div></div>',
+                unsafe_allow_html=True)
+
+    df_z = df_all[df_all["zona"] == zona]
+    opciones = ["Todos"] + sorted(df_z["proyecto"].unique().tolist())
+    default_idx = opciones.index(default_proyecto) if default_proyecto in opciones else 0
+    col_sel, _ = st.columns([1, 4])
+    with col_sel:
+        proyecto_sel = st.selectbox("Proyecto:", opciones, index=default_idx,
+                                    key=f"sel_etq_{zona}")
+
+    df_p = df_z.copy() if proyecto_sel == "Todos" else df_z[df_z["proyecto"] == proyecto_sel].copy()
+
+    def kpi_card(lbl, val, pct_str, pct_color):
+        pct_html = (f'<div style="font-size:13px;font-weight:700;color:{pct_color};margin-top:4px;">{pct_str}</div>'
+                    if pct_str else
+                    '<div style="font-size:13px;margin-top:4px;visibility:hidden;">—</div>')
+        return (
+            '<div class="kpi-box">'
+            f'<div class="kpi-lbl">{lbl}</div>'
+            f'<div class="kpi-val">{val}</div>'
+            f'{pct_html}'
+            '</div>'
+        )
+
+    def render_fila(titulo, campo, color_titulo, show_pct=True):
+        st.markdown(
+            f'<div style="text-align:center;margin:18px 0 8px;">'
+            f'<span style="font-size:13px;font-weight:700;color:{color_titulo};">{titulo}</span>'
+            f'</div>', unsafe_allow_html=True)
+        html = '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'
+        for m in metricas:
+            row_m = df_p[df_p["metrica"] == m]
+            if row_m.empty:
+                html += kpi_card(m, "—", "", "")
+                continue
+            actual = row_m["actual"].sum()
+            sin_tx = row_m["sin_tx"].sum()
+            val    = row_m[campo].sum()
+            base   = actual if campo == "sin_tx" else sin_tx
+            diff   = val - base
+            val_fmt = fmt_v(val, pct=es_pct_metrica(m))
+            if show_pct and base and base != 0:
+                if es_pct_metrica(m):
+                    # IRR / CASH ON CASH: mostrar diferencia en puntos porcentuales
+                    pp = diff * 100
+                    pct_str  = f"{pp:+.2f} pp"
+                    pct_color = "#2ECC71" if pp >= 0 else "#E74C3C"
+                else:
+                    # FCF: mostrar variación relativa
+                    pct_change = diff / abs(base) * 100
+                    pct_str    = f"{pct_change:+.1f}%"
+                    pct_color  = "#2ECC71" if pct_change >= 0 else "#E74C3C"
+            else:
+                pct_str, pct_color = "", ""
+            html += kpi_card(m, val_fmt, pct_str, pct_color)
+        html += '</div>'
+        st.markdown(html, unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-top:12px;'></div>", unsafe_allow_html=True)
+    render_fila("ESCENARIO BASE — CON IMPUESTO", "actual", "#0A2463", show_pct=False)
+    st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
+    render_fila("SIN IMPUESTO (LEY CASCO)", "sin_tx", "#1E5FA8", show_pct=True)
+    st.markdown("""
+<div style="background:#F0F4FA;border-left:4px solid #1E5FA8;border-radius:6px;
+     padding:12px 20px;margin:20px auto 8px auto;max-width:860px;font-size:13px;color:#333;line-height:1.8;">
+  <b style="color:#0A2463;">Escenario Base — Con Impuesto</b> — Métricas del proyecto bajo la carga fiscal vigente sin aplicar beneficios de exoneración.<br>
+  <b style="color:#0A2463;">Sin Impuesto (Ley Casco)</b> — Métricas del proyecto aplicando la exoneración fiscal de la Ley Casco Antiguo. El porcentaje indica la variación respecto al escenario base.
+</div>""", unsafe_allow_html=True)
+    st.markdown("<div style='margin-top:20px;'></div>", unsafe_allow_html=True)
+
+render_zona_etiquetas(
     zona             = "CASCO ANTIGUO",
-    metrica_grafico  = "CASH ON CASH",
-    kpi_orden        = ["CASH ON CASH", "FCF FROM FINANCING", "IRR"],
+    metricas         = ["CASH ON CASH", "FCF FROM FINANCING", "IRR"],
     default_proyecto = "MANSION BALUARTE"
 )
 
@@ -231,9 +342,8 @@ st.markdown("<hr style='border:none;border-top:2px solid #e0e0e0;margin:32px 0;'
 # ══════════════════════════════════════════════════════════════════════════════
 # SANTA ANA
 # ══════════════════════════════════════════════════════════════════════════════
-render_zona(
+render_zona_etiquetas(
     zona             = "SANTA ANA",
-    metrica_grafico  = "IRR",
-    kpi_orden        = ["IRR", "FCF FROM FINANCING", "CASH ON CASH"],
+    metricas         = ["CASH ON CASH", "FCF FROM FINANCING", "IRR"],
     default_proyecto = "CENTRA LINK"
 )

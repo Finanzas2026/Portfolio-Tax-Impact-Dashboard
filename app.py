@@ -11,13 +11,13 @@ st.markdown("""
 <style>
 .main .block-container{max-width:1400px;padding:1.5rem 2rem;overflow-x:auto;}
 section[data-testid="stSidebar"]{display:none;}
-.header-box{background:linear-gradient(135deg,#0A2463,#0070C0);padding:22px 32px;
+.header-box{background:#4D93D9;padding:5px 32px;
     border-radius:12px;margin-bottom:24px;}
 .header-title{color:white;font-size:26px;font-weight:900;letter-spacing:2px;}
 .header-sub{color:#D0E8FF;font-size:13px;margin-top:4px;}
-.zona-title{font-size:15px;font-weight:900;color:white;background:#0A2463;
-    padding:10px 20px;border-radius:8px;margin:20px 0 14px;letter-spacing:1px;
-    display:inline-block;}
+.zona-title{font-size:15px;font-weight:900;color:#0A2463;background:#DCE6F1;
+    padding:1px 20px;border-radius:8px;margin:20px 0 14px;letter-spacing:1px;
+    display:inline-block;min-width:460px;text-align:center;}
 .kpi-box{background:#ffffff;border-radius:10px;padding:14px 18px;
     box-shadow:0 2px 8px rgba(0,0,0,.08);text-align:center;
     max-width:300px;width:300px;margin-right:10px;}
@@ -85,6 +85,7 @@ def resumen_fcf(df):
     s_tot = s_ca + s_sa
 
     st.markdown('<div style="text-align:center;"><div class="zona-title">RESUMEN PORTFOLIO — FCF FROM FINANCING</div></div>', unsafe_allow_html=True)
+    st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
 
     def pct_var(base, diff):
         if not base or base == 0: return ""
@@ -259,9 +260,6 @@ resumen_fcf(df_all)
 # CASCO ANTIGUO — layout de etiquetas (2 filas × 3 métricas)
 # ══════════════════════════════════════════════════════════════════════════════
 def render_zona_etiquetas(zona, metricas, default_proyecto):
-    st.markdown(f'<div style="text-align:center;"><div class="zona-title">{zona}</div></div>',
-                unsafe_allow_html=True)
-
     df_z = df_all[df_all["zona"] == zona]
     opciones = ["Todos"] + sorted(df_z["proyecto"].unique().tolist())
     default_idx = opciones.index(default_proyecto) if default_proyecto in opciones else 0
@@ -269,6 +267,9 @@ def render_zona_etiquetas(zona, metricas, default_proyecto):
     with col_sel:
         proyecto_sel = st.selectbox("Proyecto:", opciones, index=default_idx,
                                     key=f"sel_etq_{zona}")
+
+    st.markdown(f'<div style="text-align:center;"><div class="zona-title">{zona}</div></div>',
+                unsafe_allow_html=True)
 
     df_p = df_z.copy() if proyecto_sel == "Todos" else df_z[df_z["proyecto"] == proyecto_sel].copy()
 
